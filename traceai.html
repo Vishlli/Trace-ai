@@ -1,0 +1,2273 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TN Police AI System - Mobile</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;family=Poppins:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0A0E27;
+      color: #E8EDF5;
+      overflow-x: hidden;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    /* Animated Background */
+    .animated-bg {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0A0E27 0%, #1A1F3A 50%, #0A0E27 100%);
+      z-index: -1;
+    }
+
+    .grid-overlay {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(0, 191, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 191, 255, 0.03) 1px, transparent 1px);
+      background-size: 30px 30px;
+      animation: gridMove 20s linear infinite;
+      z-index: -1;
+    }
+
+    @keyframes gridMove {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(30px, 30px); }
+    }
+
+    .glow-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.3;
+      animation: float 15s ease-in-out infinite;
+      z-index: -1;
+    }
+
+    .orb-1 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(0, 191, 255, 0.5), transparent);
+      top: -10%;
+      left: -15%;
+    }
+
+    .orb-2 {
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(0, 123, 255, 0.4), transparent);
+      bottom: -5%;
+      right: -10%;
+      animation-delay: 7s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -30px) scale(1.1); }
+      66% { transform: translate(-20px, 20px) scale(0.9); }
+    }
+
+    /* Login Page */
+    .login-page {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100%;
+      padding: 20px;
+    }
+
+    .login-container {
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(30px);
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 20px;
+      padding: 30px 20px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 191, 255, 0.2);
+      animation: slideIn 0.6s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .logo-container {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo-badge {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, #00BFFF, #0080FF);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 35px rgba(0, 191, 255, 0.6);
+      animation: pulse 3s ease-in-out infinite;
+      position: relative;
+    }
+
+    .logo-badge::before {
+      content: '';
+      position: absolute;
+      width: 120%;
+      height: 120%;
+      border-radius: 50%;
+      border: 2px solid #00BFFF;
+      animation: radar 2s linear infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 10px 35px rgba(0, 191, 255, 0.6); }
+      50% { box-shadow: 0 10px 50px rgba(0, 191, 255, 0.9); }
+    }
+
+    @keyframes radar {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+
+    .logo-badge svg {
+      width: 40px;
+      height: 40px;
+    }
+
+    .login-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #00BFFF, #FFFFFF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .login-subtitle {
+      color: #94A3B8;
+      font-size: 13px;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #00BFFF;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(10, 14, 39, 0.8);
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 10px;
+      color: #E8EDF5;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: #00BFFF;
+      box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.2);
+      background: rgba(10, 14, 39, 0.95);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #00BFFF, #0080FF);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      box-shadow: 0 6px 25px rgba(0, 191, 255, 0.6);
+      margin-top: 10px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .login-btn:active {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 191, 255, 0.8);
+    }
+
+    .login-footer {
+      text-align: center;
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(0, 191, 255, 0.2);
+      color: #64748B;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      line-height: 1.5;
+    }
+
+    /* Dashboard */
+    .dashboard {
+      display: none;
+      flex-direction: column;
+      min-height: 100%;
+    }
+
+    .dashboard.active {
+      display: flex;
+    }
+
+    /* Mobile Navigation */
+    .mobile-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 23, 42, 0.98);
+      backdrop-filter: blur(30px);
+      border-top: 1px solid rgba(0, 191, 255, 0.2);
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 5px;
+      z-index: 1000;
+      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .mobile-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: #94A3B8;
+      font-size: 10px;
+      font-weight: 600;
+      text-align: center;
+      min-width: 60px;
+    }
+
+    .mobile-nav-item svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .mobile-nav-item.active {
+      background: rgba(0, 191, 255, 0.2);
+      color: #00BFFF;
+    }
+
+    /* Topbar */
+    .topbar {
+      background: rgba(15, 23, 42, 0.98);
+      backdrop-filter: blur(30px);
+      border-bottom: 1px solid rgba(0, 191, 255, 0.2);
+      padding: 15px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .topbar-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .topbar-left h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #00BFFF, #FFFFFF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .topbar-subtitle {
+      color: #94A3B8;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: rgba(0, 191, 255, 0.15);
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 10px;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #00BFFF, #0080FF);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 12px;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .user-name {
+      font-weight: 700;
+      font-size: 13px;
+      color: #E8EDF5;
+    }
+
+    .user-role {
+      font-size: 11px;
+      color: #94A3B8;
+    }
+
+    .content-area {
+      padding: 15px;
+      padding-bottom: 80px;
+      overflow-y: auto;
+    }
+
+    /* Alert Banner */
+    .alert-banner {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.15));
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      border-radius: 14px;
+      padding: 15px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 12px;
+      animation: alertPulse 2s ease-in-out infinite;
+      cursor: pointer;
+    }
+
+    @keyframes alertPulse {
+      0%, 100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.3); }
+      50% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.6); }
+    }
+
+    .alert-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(239, 68, 68, 0.3);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: shake 0.5s ease-in-out infinite;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-2px); }
+      75% { transform: translateX(2px); }
+    }
+
+    .alert-content {
+      flex: 1;
+    }
+
+    .alert-title {
+      font-weight: 800;
+      font-size: 14px;
+      color: #FCA5A5;
+      margin-bottom: 5px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .alert-text {
+      color: #E8EDF5;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: rgba(15, 23, 42, 0.98);
+      backdrop-filter: blur(30px);
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 14px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, #00BFFF, #0080FF);
+    }
+
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .stat-label {
+      color: #94A3B8;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-icon {
+      width: 45px;
+      height: 45px;
+      background: rgba(0, 191, 255, 0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(0, 191, 255, 0.3);
+    }
+
+    .stat-value {
+      font-family: 'Poppins', sans-serif;
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #00BFFF, #FFFFFF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-change {
+      font-size: 12px;
+      color: #22C55E;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 600;
+    }
+
+    /* Section Styles */
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    /* Upload Section */
+    .upload-tabs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .upload-tab {
+      padding: 12px 14px;
+      background: rgba(15, 23, 42, 0.98);
+      border: 2px solid rgba(0, 191, 255, 0.3);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #94A3B8;
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .upload-tab.active {
+      background: rgba(0, 191, 255, 0.25);
+      border-color: #00BFFF;
+      color: #00BFFF;
+      box-shadow: 0 0 20px rgba(0, 191, 255, 0.4);
+    }
+
+    .upload-area {
+      background: rgba(15, 23, 42, 0.98);
+      border: 3px dashed rgba(0, 191, 255, 0.4);
+      border-radius: 14px;
+      padding: 30px 20px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .upload-icon {
+      width: 50px;
+      height: 50px;
+      margin: 0 auto 15px;
+      background: rgba(0, 191, 255, 0.2);
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .upload-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #E8EDF5;
+    }
+
+    .upload-subtitle {
+      color: #94A3B8;
+      font-size: 12px;
+      margin-bottom: 15px;
+    }
+
+    .upload-formats {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .format-badge {
+      padding: 6px 12px;
+      background: rgba(0, 191, 255, 0.15);
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 8px;
+      color: #00BFFF;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    /* Processing Panel */
+    .processing-panel {
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 14px;
+      padding: 20px;
+      display: none;
+      margin-bottom: 20px;
+    }
+
+    .processing-panel.active {
+      display: block;
+      animation: slideIn 0.5s ease-out;
+    }
+
+    .processing-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .ai-spinner {
+      width: 35px;
+      height: 35px;
+      border: 3px solid rgba(0, 191, 255, 0.2);
+      border-top-color: #00BFFF;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .processing-text {
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #E8EDF5;
+    }
+
+    .processing-steps {
+      margin-bottom: 20px;
+    }
+
+    .processing-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      background: rgba(0, 191, 255, 0.1);
+      border-left: 3px solid rgba(0, 191, 255, 0.3);
+      border-radius: 8px;
+      margin-bottom: 10px;
+      color: #94A3B8;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .processing-step.active {
+      border-left-color: #00BFFF;
+      background: rgba(0, 191, 255, 0.2);
+      color: #00BFFF;
+    }
+
+    .processing-step.complete {
+      border-left-color: #22C55E;
+      background: rgba(34, 197, 94, 0.15);
+      color: #22C55E;
+    }
+
+    .step-icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(0, 191, 255, 0.2);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 15px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00BFFF, #0080FF);
+      border-radius: 8px;
+      transition: width 0.5s ease;
+      box-shadow: 0 0 15px rgba(0, 191, 255, 0.6);
+    }
+
+    .progress-text {
+      text-align: center;
+      color: #00BFFF;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* CCTV Feed */
+    .cctv-container {
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .cctv-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .cctv-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: #E8EDF5;
+    }
+
+    .live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      border-radius: 8px;
+      color: #FCA5A5;
+      font-weight: 700;
+      font-size: 11px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #EF4444;
+      border-radius: 50%;
+      animation: pulseDot 1.5s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; box-shadow: 0 0 10px #EF4444; }
+      50% { opacity: 0.4; box-shadow: 0 0 20px #EF4444; }
+    }
+
+    .cctv-feed {
+      position: relative;
+      width: 100%;
+      height: 250px;
+      background: #000000;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid rgba(0, 191, 255, 0.3);
+    }
+
+    .cctv-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(100%) contrast(1.2);
+    }
+
+    .cctv-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .scan-line {
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00BFFF, transparent);
+      animation: scan 3s linear infinite;
+      box-shadow: 0 0 15px #00BFFF;
+    }
+
+    @keyframes scan {
+      0% { top: 0; }
+      100% { top: 100%; }
+    }
+
+    .detection-box {
+      position: absolute;
+      border: 2px solid #00BFFF;
+      border-radius: 6px;
+      box-shadow: 0 0 15px rgba(0, 191, 255, 0.6);
+      animation: boxPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes boxPulse {
+      0%, 100% { border-color: #00BFFF; }
+      50% { border-color: #00FF88; }
+    }
+
+    .detection-label {
+      position: absolute;
+      top: -25px;
+      left: 0;
+      padding: 4px 10px;
+      background: rgba(0, 191, 255, 0.95);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 5px;
+      white-space: nowrap;
+    }
+
+    .cctv-info {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 10px 12px;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 8px;
+      border: 1px solid rgba(0, 191, 255, 0.3);
+    }
+
+    .cctv-location {
+      color: #00BFFF;
+      font-weight: 700;
+      font-size: 11px;
+    }
+
+    .cctv-timestamp {
+      color: #94A3B8;
+      font-size: 10px;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* Match Result */
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .comparison-card {
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 14px;
+      padding: 15px;
+    }
+
+    .comparison-header {
+      font-size: 11px;
+      font-weight: 800;
+      color: #00BFFF;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .comparison-image {
+      width: 100%;
+      height: 180px;
+      background: linear-gradient(135deg, rgba(0, 191, 255, 0.3), rgba(0, 128, 255, 0.2));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+      margin-bottom: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .comparison-image::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 191, 255, 0.1) 2px,
+        rgba(0, 191, 255, 0.1) 4px
+      );
+    }
+
+    .comparison-info {
+      color: #E8EDF5;
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    .comparison-info strong {
+      color: #00BFFF;
+      font-weight: 700;
+    }
+
+    /* AI Analysis */
+    .ai-analysis {
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .analysis-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .analysis-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: #E8EDF5;
+    }
+
+    .analysis-content {
+      color: #94A3B8;
+      font-size: 13px;
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .analysis-content strong {
+      color: #00BFFF;
+      font-weight: 700;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .metric-item {
+      padding: 14px;
+      background: rgba(0, 191, 255, 0.1);
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .metric-icon {
+      width: 16px;
+      height: 16px;
+      color: #22C55E;
+    }
+
+    .metric-text {
+      font-size: 13px;
+      color: #E8EDF5;
+      font-weight: 600;
+    }
+
+    .confidence-bar {
+      margin-bottom: 20px;
+    }
+
+    .confidence-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-weight: 700;
+      color: #E8EDF5;
+      font-size: 13px;
+    }
+
+    .confidence-value {
+      color: #00BFFF;
+      font-size: 20px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .confidence-progress {
+      width: 100%;
+      height: 12px;
+      background: rgba(0, 191, 255, 0.2);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00BFFF, #22C55E);
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 191, 255, 0.6);
+      animation: fillBar 2s ease-out;
+    }
+
+    @keyframes fillBar {
+      from { width: 0; }
+    }
+
+    /* Decision Buttons */
+    .decision-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .decision-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .confirm-btn {
+      background: linear-gradient(135deg, #22C55E, #16A34A);
+      color: white;
+      box-shadow: 0 6px 20px rgba(34, 197, 94, 0.5);
+    }
+
+    .reject-btn {
+      background: rgba(239, 68, 68, 0.2);
+      color: #EF4444;
+      border: 2px solid rgba(239, 68, 68, 0.4);
+    }
+
+    .verify-btn {
+      background: rgba(0, 191, 255, 0.2);
+      color: #00BFFF;
+      border: 2px solid rgba(0, 191, 255, 0.4);
+    }
+
+    /* AI Assistant */
+    .chat-panel {
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 14px;
+      padding: 20px;
+      height: 500px;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(0, 191, 255, 0.2);
+    }
+
+    .chat-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: #E8EDF5;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 15px;
+      padding-right: 8px;
+    }
+
+    .chat-message {
+      margin-bottom: 15px;
+      display: flex;
+      gap: 10px;
+      animation: messageSlide 0.3s ease-out;
+    }
+
+    @keyframes messageSlide {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message-avatar {
+      width: 35px;
+      height: 35px;
+      background: linear-gradient(135deg, #00BFFF, #0080FF);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .message-content {
+      flex: 1;
+    }
+
+    .message-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .message-sender {
+      font-weight: 800;
+      font-size: 13px;
+      color: #E8EDF5;
+    }
+
+    .message-time {
+      color: #64748B;
+      font-size: 10px;
+    }
+
+    .message-text {
+      background: rgba(0, 191, 255, 0.15);
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #E8EDF5;
+    }
+
+    .message-text strong {
+      color: #00BFFF;
+      font-weight: 700;
+    }
+
+    .chat-input-area {
+      display: flex;
+      gap: 10px;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 12px 14px;
+      background: rgba(10, 14, 39, 0.8);
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 10px;
+      color: #E8EDF5;
+      font-size: 13px;
+    }
+
+    .chat-input:focus {
+      outline: none;
+      border-color: #00BFFF;
+      box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.2);
+    }
+
+    .send-btn {
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #00BFFF, #0080FF);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+    }
+
+    .suggestions-panel {
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .suggestions-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      color: #E8EDF5;
+      margin-bottom: 15px;
+    }
+
+    .suggestion-item {
+      padding: 12px 14px;
+      background: rgba(0, 191, 255, 0.1);
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 12px;
+      color: #94A3B8;
+      font-weight: 600;
+    }
+
+    .suggestion-item:active {
+      background: rgba(0, 191, 255, 0.2);
+      color: #00BFFF;
+    }
+
+    /* Reports */
+    .reports-container {
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .table-header {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 20px;
+      border-bottom: 1px solid rgba(0, 191, 255, 0.2);
+    }
+
+    .table-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: #E8EDF5;
+    }
+
+    .export-btn {
+      width: 100%;
+      padding: 12px;
+      background: rgba(0, 191, 255, 0.2);
+      border: 1px solid rgba(0, 191, 255, 0.4);
+      border-radius: 10px;
+      color: #00BFFF;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .report-card {
+      padding: 15px 20px;
+      border-bottom: 1px solid rgba(0, 191, 255, 0.15);
+    }
+
+    .report-card:last-child {
+      border-bottom: none;
+    }
+
+    .report-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .report-id {
+      font-weight: 800;
+      font-size: 14px;
+      color: #E8EDF5;
+    }
+
+    .status-badge {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-verified {
+      background: rgba(34, 197, 94, 0.2);
+      color: #22C55E;
+    }
+
+    .status-pending {
+      background: rgba(251, 191, 36, 0.2);
+      color: #FBBF24;
+    }
+
+    .report-details {
+      color: #94A3B8;
+      font-size: 12px;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .report-details strong {
+      color: #E8EDF5;
+    }
+
+    .action-btn {
+      width: 100%;
+      padding: 10px;
+      background: rgba(0, 191, 255, 0.2);
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 8px;
+      color: #00BFFF;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    /* Chart */
+    .chart-container {
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .chart-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: #E8EDF5;
+      margin-bottom: 15px;
+    }
+
+    .chart-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .chart-bar-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .chart-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #94A3B8;
+    }
+
+    .chart-bar-bg {
+      width: 100%;
+      height: 28px;
+      background: rgba(0, 191, 255, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .chart-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00BFFF, #0080FF);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 12px;
+      color: white;
+      font-weight: 800;
+      font-size: 11px;
+      box-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
+      animation: barGrow 1.5s ease-out;
+    }
+
+    @keyframes barGrow {
+      from { width: 0; }
+    }
+
+    /* Success Notification */
+    .success-notification {
+      position: fixed;
+      top: 20px;
+      left: 15px;
+      right: 15px;
+      padding: 15px 20px;
+      background: rgba(34, 197, 94, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(34, 197, 94, 0.5);
+      border-radius: 12px;
+      color: white;
+      font-weight: 700;
+      font-size: 13px;
+      box-shadow: 0 10px 35px rgba(34, 197, 94, 0.5);
+      z-index: 2000;
+      display: none;
+      animation: slideInDown 0.4s ease-out;
+    }
+
+    @keyframes slideInDown {
+      from {
+        transform: translateY(-100px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .success-notification.active {
+      display: block;
+    }
+
+    /* Parental Data Section */
+    .parental-upload-container {
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .parental-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .parental-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: #FBBF24;
+    }
+
+    .parental-subtitle {
+      color: #94A3B8;
+      font-size: 12px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .parent-upload-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+
+    .parent-upload-card {
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-radius: 12px;
+      padding: 15px;
+    }
+
+    .parent-label {
+      font-weight: 700;
+      font-size: 13px;
+      color: #FBBF24;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="animated-bg"></div>
+  <div class="grid-overlay"></div>
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div><!-- Login Page -->
+  <div class="login-page" id="loginPage">
+   <div class="login-container">
+    <div class="logo-container">
+     <div class="logo-badge">
+      <svg viewbox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /> <circle cx="12" cy="10" r="3" />
+      </svg>
+     </div>
+     <h1 class="login-title">AI Identification Portal</h1>
+     <p class="login-subtitle">Tamil Nadu Police – Missing Person &amp; Unidentified Body Identification</p>
+    </div>
+    <form id="loginForm">
+     <div class="form-group"><label class="form-label" for="loginEmail">Email Address</label> <input type="email" id="loginEmail" class="form-input" placeholder="officer@tnpolice.gov.in" required>
+     </div>
+     <div class="form-group"><label class="form-label" for="loginPassword">Password</label> <input type="password" id="loginPassword" class="form-input" placeholder="Enter password" required>
+     </div>
+     <div class="form-group"><label class="form-label" for="loginRole">Select Role</label> <select id="loginRole" class="form-select" required> <option value="admin">Admin</option> <option value="investigator">Investigator</option> <option value="analyst">Analyst</option> </select>
+     </div><button type="submit" class="login-btn">Access System</button>
+    </form>
+    <div class="login-footer">
+     <svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /> <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+     </svg> Secure Access – Authorized Personnel Only
+    </div>
+   </div>
+  </div><!-- Dashboard -->
+  <div class="dashboard" id="dashboard">
+   <div class="topbar">
+    <div class="topbar-content">
+     <div class="topbar-left">
+      <h2 id="pageTitle">Dashboard</h2>
+      <p class="topbar-subtitle">Welcome back, Officer</p>
+     </div>
+     <div class="user-profile">
+      <div class="user-avatar">
+       PR
+      </div>
+      <div class="user-info">
+       <div class="user-name">
+        Priya R
+       </div>
+       <div class="user-role" id="userRoleDisplay">
+        Admin
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div class="content-area"><!-- Dashboard Section -->
+    <section class="section active" id="dashboardSection">
+     <div class="alert-banner" onclick="navigateTo('match')">
+      <div class="alert-icon">
+       <svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="#FCA5A5" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /> <line x1="12" y1="9" x2="12" y2="13" /> <line x1="12" y1="17" x2="12.01" y2="17" />
+       </svg>
+      </div>
+      <div class="alert-content">
+       <div class="alert-title">
+        ⚠️ New Match Detected
+       </div>
+       <div class="alert-text">
+        Face Similarity 92% – Anna Nagar CCTV-Feed-07
+       </div>
+      </div>
+     </div>
+     <div class="stats-grid">
+      <div class="stat-card">
+       <div class="stat-header"><span class="stat-label">Total Cases Processed</span>
+        <div class="stat-icon">
+         <svg width="22" height="22" viewbox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /> <polyline points="14 2 14 8 20 8" />
+         </svg>
+        </div>
+       </div>
+       <div class="stat-value">
+        1,023
+       </div>
+       <div class="stat-change">
+        <svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15" />
+        </svg> +15% this month
+       </div>
+      </div>
+      <div class="stat-card">
+       <div class="stat-header"><span class="stat-label">Matches Found</span>
+        <div class="stat-icon">
+         <svg width="22" height="22" viewbox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2"><polyline points="20 6 9 17 4 12" />
+         </svg>
+        </div>
+       </div>
+       <div class="stat-value">
+        57
+       </div>
+       <div class="stat-change">
+        <svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15" />
+        </svg> +8% this month
+       </div>
+      </div>
+      <div class="stat-card">
+       <div class="stat-header"><span class="stat-label">Active CCTV Streams</span>
+        <div class="stat-icon">
+         <svg width="22" height="22" viewbox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" /> <circle cx="12" cy="13" r="4" />
+         </svg>
+        </div>
+       </div>
+       <div class="stat-value">
+        12
+       </div>
+       <div class="stat-change">
+        <svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15" />
+        </svg> Live monitoring
+       </div>
+      </div>
+      <div class="stat-card">
+       <div class="stat-header"><span class="stat-label">Pending Verifications</span>
+        <div class="stat-icon">
+         <svg width="22" height="22" viewbox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2"><circle cx="12" cy="12" r="10" /> <polyline points="12 6 12 12 16 14" />
+         </svg>
+        </div>
+       </div>
+       <div class="stat-value">
+        9
+       </div>
+       <div class="stat-change">
+        <svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15" />
+        </svg> Requires attention
+       </div>
+      </div>
+     </div>
+     <div class="chart-container">
+      <h3 class="chart-title">Match Sources</h3>
+      <div class="chart-bars">
+       <div class="chart-bar-item">
+        <div class="chart-label">
+         Facial Recognition
+        </div>
+        <div class="chart-bar-bg">
+         <div class="chart-bar-fill" style="width: 65%;">
+          65%
+         </div>
+        </div>
+       </div>
+       <div class="chart-bar-item">
+        <div class="chart-label">
+         Dental Records
+        </div>
+        <div class="chart-bar-bg">
+         <div class="chart-bar-fill" style="width: 20%;">
+          20%
+         </div>
+        </div>
+       </div>
+       <div class="chart-bar-item">
+        <div class="chart-label">
+         Skeletal Analysis
+        </div>
+        <div class="chart-bar-bg">
+         <div class="chart-bar-fill" style="width: 10%;">
+          10%
+         </div>
+        </div>
+       </div>
+       <div class="chart-bar-item">
+        <div class="chart-label">
+         Mixed Methods
+        </div>
+        <div class="chart-bar-bg">
+         <div class="chart-bar-fill" style="width: 5%;">
+          5%
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Upload Section -->
+    <section class="section" id="uploadSection">
+     <div class="section-header" style="background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(0, 191, 255, 0.3); border-radius: 14px; padding: 20px; margin-bottom: 20px;">
+      <h3 style="font-family: 'Poppins', sans-serif; font-size: 18px; font-weight: 800; color: #E8EDF5; margin-bottom: 8px;">Upload Case Data</h3>
+      <p style="color: #94A3B8; font-size: 12px; line-height: 1.5;">Upload missing person/unidentified body data and suspected match data for AI comparison</p>
+     </div><!-- Missing Person / Dead Body Upload -->
+     <div style="background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(0, 191, 255, 0.3); border-radius: 14px; padding: 20px; margin-bottom: 20px;">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+       <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /> <circle cx="12" cy="7" r="4" />
+       </svg>
+       <h4 style="font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 800; color: #00BFFF;">Missing Person / Unidentified Body</h4>
+      </div>
+      <div class="upload-tabs">
+       <div class="upload-tab active" data-type="missing-image" data-category="missing">
+        <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /> <circle cx="8.5" cy="8.5" r="1.5" /> <polyline points="21 15 16 10 5 21" />
+        </svg> Image
+       </div>
+       <div class="upload-tab" data-type="missing-video" data-category="missing">
+        <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7" /> <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+        </svg> Video
+       </div>
+       <div class="upload-tab" data-type="missing-dental" data-category="missing">
+        <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20" /> <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+        </svg> Dental
+       </div>
+       <div class="upload-tab" data-type="missing-skeletal" data-category="missing">
+        <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5.52 19c.64-2.2 1.84-3 3.22-3h6.52c1.38 0 2.58.8 3.22 3" /> <circle cx="12" cy="10" r="3" />
+        </svg> Skeletal
+       </div>
+      </div>
+      <div class="upload-area" onclick="uploadMissingData()" style="margin-top: 15px;">
+       <div class="upload-icon">
+        <svg width="30" height="30" viewbox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /> <polyline points="17 8 12 3 7 8" /> <line x1="12" y1="3" x2="12" y2="15" />
+        </svg>
+       </div>
+       <h3 class="upload-title" style="font-size: 16px;">Upload Missing Person Data</h3>
+       <p class="upload-subtitle" style="font-size: 12px;">JPG, PNG, MP4, DICOM, STL</p>
+      </div>
+     </div><!-- Suspected Match Upload -->
+     <div style="background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 14px; padding: 20px; margin-bottom: 20px;">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+       <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2"><circle cx="11" cy="11" r="8" /> <path d="m21 21-4.35-4.35" />
+       </svg>
+       <h4 style="font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 800; color: #22C55E;">Suspected Match Data</h4>
+      </div>
+      <div class="upload-tabs">
+       <div class="upload-tab active" data-type="suspect-image" data-category="suspect">
+        <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /> <circle cx="8.5" cy="8.5" r="1.5" /> <polyline points="21 15 16 10 5 21" />
+        </svg> Image
+       </div>
+       <div class="upload-tab" data-type="suspect-video" data-category="suspect">
+        <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7" /> <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+        </svg> Video
+       </div>
+      </div>
+      <div class="upload-area" onclick="uploadSuspectData()" style="margin-top: 15px; border-color: rgba(34, 197, 94, 0.4);">
+       <div class="upload-icon" style="background: rgba(34, 197, 94, 0.2); border-color: rgba(34, 197, 94, 0.3);">
+        <svg width="30" height="30" viewbox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /> <polyline points="17 8 12 3 7 8" /> <line x1="12" y1="3" x2="12" y2="15" />
+        </svg>
+       </div>
+       <h3 class="upload-title" style="font-size: 16px;">Upload Suspected Match</h3>
+       <p class="upload-subtitle" style="font-size: 12px;">JPG, PNG, MP4, AVI</p>
+      </div>
+     </div><!-- Matching Options -->
+     <div style="background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(0, 191, 255, 0.3); border-radius: 14px; padding: 20px; margin-bottom: 20px;">
+      <h4 style="font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 800; color: #E8EDF5; margin-bottom: 15px;">Select Matching Method</h4>
+      <div style="display: flex; flex-direction: column; gap: 12px;"><button class="decision-btn" style="background: rgba(0, 191, 255, 0.2); color: #00BFFF; border: 2px solid rgba(0, 191, 255, 0.4); display: flex; align-items: center; gap: 10px; justify-content: center;" onclick="matchWithCCTV()">
+        <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" /> <circle cx="12" cy="13" r="4" />
+        </svg> Match with Real-Time CCTV </button> <button class="decision-btn" style="background: rgba(34, 197, 94, 0.2); color: #22C55E; border: 2px solid rgba(34, 197, 94, 0.4); display: flex; align-items: center; gap: 10px; justify-content: center;" onclick="matchWithSuspect()">
+        <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8" /> <path d="m21 21-4.35-4.35" />
+        </svg> Match with Suspected Upload </button>
+      </div>
+     </div>
+     <div class="processing-panel" id="processingPanel">
+      <div class="processing-header">
+       <div class="ai-spinner"></div>
+       <div class="processing-text">
+        Processing...
+       </div>
+      </div>
+      <div class="processing-steps">
+       <div class="processing-step complete">
+        <svg class="step-icon" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12" />
+        </svg> Face Enhancement Complete
+       </div>
+       <div class="processing-step complete">
+        <svg class="step-icon" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12" />
+        </svg> Feature Extraction Complete
+       </div>
+       <div class="processing-step active">
+        <div class="ai-spinner" style="width: 18px; height: 18px; border-width: 2px;"></div> Database Matching...
+       </div>
+      </div>
+      <div class="progress-bar">
+       <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+      </div>
+      <div class="progress-text" id="progressText">
+       0%
+      </div>
+     </div>
+    </section><!-- Parental Data Section -->
+    <section class="section" id="parentalSection">
+     <div class="parental-upload-container">
+      <div class="parental-header">
+       <svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /> <circle cx="9" cy="7" r="4" /> <path d="M23 21v-2a4 4 0 0 0-3-3.87" /> <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+       </svg>
+       <h3 class="parental-title">Parental Data Upload</h3>
+      </div>
+      <p class="parental-subtitle">⚠️ <strong>AI Assistant Notice:</strong> The suspect data provided is unclear or insufficient for accurate matching. Please upload parental data (father and mother images) to improve identification accuracy through genetic facial feature analysis.</p>
+      <div class="parent-upload-grid">
+       <div class="parent-upload-card">
+        <div class="parent-label">
+         <svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /> <circle cx="12" cy="7" r="4" />
+         </svg> Father's Image
+        </div>
+        <div class="upload-area" onclick="uploadParentData('father')" style="border-color: rgba(251, 191, 36, 0.4); padding: 25px 15px;">
+         <div class="upload-icon" style="background: rgba(251, 191, 36, 0.2); border-color: rgba(251, 191, 36, 0.3); width: 45px; height: 45px; margin-bottom: 12px;">
+          <svg width="25" height="25" viewbox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /> <polyline points="17 8 12 3 7 8" /> <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+         </div>
+         <h3 class="upload-title" style="font-size: 14px;">Upload Father's Photo</h3>
+         <p class="upload-subtitle" style="font-size: 11px;">JPG, PNG</p>
+        </div>
+       </div>
+       <div class="parent-upload-card">
+        <div class="parent-label">
+         <svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /> <circle cx="12" cy="7" r="4" />
+         </svg> Mother's Image
+        </div>
+        <div class="upload-area" onclick="uploadParentData('mother')" style="border-color: rgba(251, 191, 36, 0.4); padding: 25px 15px;">
+         <div class="upload-icon" style="background: rgba(251, 191, 36, 0.2); border-color: rgba(251, 191, 36, 0.3); width: 45px; height: 45px; margin-bottom: 12px;">
+          <svg width="25" height="25" viewbox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /> <polyline points="17 8 12 3 7 8" /> <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+         </div>
+         <h3 class="upload-title" style="font-size: 14px;">Upload Mother's Photo</h3>
+         <p class="upload-subtitle" style="font-size: 11px;">JPG, PNG</p>
+        </div>
+       </div>
+      </div><button class="decision-btn confirm-btn" onclick="processParentalData()" style="margin-top: 20px;"> Process Parental Data </button>
+     </div>
+    </section><!-- CCTV Feed Section -->
+    <section class="section" id="cctvSection">
+     <div class="cctv-container">
+      <div class="cctv-header">
+       <h3 class="cctv-title">Live CCTV</h3>
+       <div class="live-indicator">
+        <div class="live-dot"></div> LIVE
+       </div>
+      </div>
+      <div class="cctv-feed">
+       <div class="cctv-video" style="background: linear-gradient(135deg, #1a1a1a, #2a2a2a); display: flex; align-items: center; justify-content: center; font-size: 60px;">
+        🎥
+       </div>
+       <div class="cctv-overlay">
+        <div class="scan-line"></div>
+        <div class="detection-box" style="width: 80px; height: 110px; top: 30%; left: 40%;">
+         <div class="detection-label">
+          92% Match
+         </div>
+        </div>
+       </div>
+       <div class="cctv-info">
+        <div class="cctv-location">
+         📍 Feed 07 – Anna Nagar
+        </div>
+        <div class="cctv-timestamp">
+         18:32:47 IST | 09-NOV-2025
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Match Result Section -->
+    <section class="section" id="matchSection">
+     <div class="comparison-grid">
+      <div class="comparison-card">
+       <div class="comparison-header">
+        📤 Uploaded Image
+       </div>
+       <div class="comparison-image">
+        <svg viewbox="0 0 200 240" xmlns="http://www.w3.org/2000/svg"><!-- Face outline --> <ellipse cx="100" cy="120" rx="60" ry="75" fill="#D4A574" stroke="#00BFFF" stroke-width="2" /> <!-- Hair --> <ellipse cx="100" cy="70" rx="65" ry="45" fill="#2C1810" /> <rect x="35" y="70" width="130" height="30" fill="#2C1810" /> <!-- Eyes --> <ellipse 
+        </svg>
+       </div>
+       <div class="comparison-info"><strong>File:</strong> Missing_Person_001.jpg<br><strong>Source:</strong> Family Report<br><strong>Date:</strong> 05-Nov-2025
+       </div>
+      </div>
+      <div class="comparison-card">
+       <div class="comparison-header">
+        📹 CCTV Frame
+       </div>
+       <div class="comparison-image" style="background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(26, 26, 26, 0.9)); position: relative;">
+        <svg viewbox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" style="filter: grayscale(60%) contrast(1.3);"><!-- Face outline - slightly different angle --> <ellipse cx="105" cy="120" rx="58" ry="73" fill="#D4A574" stroke="#00BFFF" stroke-width="2" /> <!-- Hair --> <ellipse cx="105" cy="72" rx="63" ry="43" fill="#2C1810" /> <rect x="42" y="72" width="126" height="28" fill="#2C1810" /> <!-- Eyes --> <ellipse cx="85" cy="112" rx="7" ry="11" fill="#1A1A1A" /> <ellipse cx="123" cy="112" rx="7" ry="11" fill="#1A1A1A" /> <circle cx="87" cy="110" r="2.5" fill="#FFFFFF" opacity="0.7" /> <circle cx="125" cy="110" r="2.5" fill="#FFFFFF" opacity="0.7" /> <!-- Eyebrows --> <path d="M 75 102 Q 85 98 93 102" stroke="#2C1810" stroke-width="2.5" fill="none" stroke-linecap="round" /> <path d="M 113 102 Q 123 98 131 102" stroke="#2C1810" stroke-width="2.5" fill="none" stroke-linecap="round" /> <!-- Nose --> <path d="M 105 117 L 100 136 L 105 139 L 110 136 Z" fill="#C49565" /> <!-- Mouth --> <path d="M 90 156 Q 105 161 120 156" stroke="#8B4513" stroke-width="2" fill="none" stroke-linecap="round" /> <!-- Ears --> <ellipse cx="50" cy="122" rx="11" ry="19" fill="#D4A574" /> <ellipse cx="160" cy="122" rx="11" ry="19" fill="#D4A574" /> <!-- Neck --> <rect x="85" y="185" width="40" height="55" fill="#D4A574" /> <!-- Shirt --> <path d="M 65 220 L 85 195 L 125 195 L 145 220 L 145 240 L 65 240 Z" fill="#374151" /> <!-- Detection markers --> <circle cx="85" cy="112" r="4" fill="none" stroke="#00FF88" stroke-width="1.5" /> <circle cx="123" cy="112" r="4" fill="none" stroke="#00FF88" stroke-width="1.5" /> <circle cx="105" cy="136" r="4" fill="none" stroke="#00FF88" stroke-width="1.5" /> <line x1="85" y1="112" x2="123" y2="112" stroke="#00BFFF" stroke-width="1" opacity="0.5" /> <line x1="85" y1="112" x2="105" y2="136" stroke="#00BFFF" stroke-width="1" opacity="0.5" /> <line x1="123" y1="112" x2="105" y2="136" stroke="#00BFFF" stroke-width="1" opacity="0.5" />
+        </svg><!-- CCTV overlay effects -->
+        <div style="position: absolute; top: 10px; left: 10px; color: #00FF88; font-size: 10px; font-family: 'Courier New', monospace; font-weight: 700;">
+         REC ●
+        </div>
+        <div style="position: absolute; top: 10px; right: 10px; color: #00BFFF; font-size: 9px; font-family: 'Courier New', monospace;">
+         18:32:47
+        </div>
+        <div style="position: absolute; bottom: 10px; left: 10px; right: 10px; height: 2px; background: linear-gradient(90deg, transparent, #00BFFF, transparent); opacity: 0.6;"></div>
+       </div>
+       <div class="comparison-info"><strong>File:</strong> Feed07_Frame12.png<br><strong>Location:</strong> Anna Nagar CCTV-07<br><strong>Time:</strong> 18:32 IST, 09-Nov-2025
+       </div>
+      </div>
+     </div>
+     <div class="ai-analysis">
+      <div class="analysis-header">
+       <svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2"><circle cx="12" cy="12" r="3" /> <path d="M12 1v6m0 6v6" />
+       </svg>
+       <h3 class="analysis-title">AI Analysis – Case TN001</h3>
+      </div>
+      <div class="confidence-bar">
+       <div class="confidence-label"><span>Match Confidence</span> <span class="confidence-value">92%</span>
+       </div>
+       <div class="confidence-progress">
+        <div class="confidence-fill" style="width: 92%;"></div>
+       </div>
+      </div>
+      <p class="analysis-content"><strong>AI Summary:</strong> Similarity detected in <strong>jawline structure</strong>, <strong>eye spacing</strong>, and <strong>nasal ridge pattern</strong>. The system analyzed <strong>128 facial landmarks</strong> and cross-referenced with <strong>skeletal correlation data</strong>.</p>
+      <div class="metrics-grid">
+       <div class="metric-item">
+        <svg class="metric-icon" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12" />
+        </svg><span class="metric-text">Facial Match: 92%</span>
+       </div>
+       <div class="metric-item">
+        <svg class="metric-icon" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12" />
+        </svg><span class="metric-text">Skeletal Correlation: 78%</span>
+       </div>
+       <div class="metric-item">
+        <svg class="metric-icon" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12" />
+        </svg><span class="metric-text">Jawline &amp; Eye Spacing: 94%</span>
+       </div>
+       <div class="metric-item">
+        <svg class="metric-icon" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12" />
+        </svg><span class="metric-text">Nasal Ridge Pattern: 89%</span>
+       </div>
+      </div>
+     </div>
+     <div class="decision-buttons"><button class="decision-btn confirm-btn" onclick="confirmMatch()">✓ Confirm Match</button> <button class="decision-btn reject-btn" onclick="rejectMatch()">✗ Reject Match</button> <button class="decision-btn verify-btn" onclick="requestVerification()">📋 Send for Verification</button>
+     </div>
+    </section><!-- AI Assistant Section -->
+    <section class="section" id="assistantSection">
+     <div class="chat-panel">
+      <div class="chat-header">
+       <svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2"><circle cx="12" cy="12" r="3" /> <path d="M12 1v6m0 6v6" />
+       </svg>
+       <h3 class="chat-title">AI Legal Assistant</h3>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+       <div class="chat-message">
+        <div class="message-avatar">
+         <svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="3" /> <path d="M12 1v6m0 6v6" />
+         </svg>
+        </div>
+        <div class="message-content">
+         <div class="message-header"><span class="message-sender">AI Assistant</span> <span class="message-time">Just now</span>
+         </div>
+         <div class="message-text">
+          Hello! I'm your AI Legal Assistant. I can help analyze match results, generate reports, and provide insights on case evidence.
+         </div>
+        </div>
+       </div>
+       <div class="chat-message">
+        <div class="message-avatar" style="background: rgba(148, 163, 184, 0.3);">
+         <svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /> <circle cx="12" cy="7" r="4" />
+         </svg>
+        </div>
+        <div class="message-content">
+         <div class="message-header"><span class="message-sender">You</span> <span class="message-time">2 min ago</span>
+         </div>
+         <div class="message-text">
+          Why was this match selected?
+         </div>
+        </div>
+       </div>
+       <div class="chat-message">
+        <div class="message-avatar">
+         <svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="3" /> <path d="M12 1v6m0 6v6" />
+         </svg>
+        </div>
+        <div class="message-content">
+         <div class="message-header"><span class="message-sender">AI Assistant</span> <span class="message-time">Just now</span>
+         </div>
+         <div class="message-text">
+          The AI model found a <strong>92% facial</strong> and <strong>78% skeletal similarity</strong>. Key features include: <strong>eye spacing (94% match)</strong>, <strong>jaw curvature (93% match)</strong>, and <strong>skull alignment (89% match)</strong>.
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="chat-input-area"><input type="text" class="chat-input" placeholder="Ask about match details..." id="chatInput"> <button class="send-btn" onclick="sendChatMessage()">Send</button>
+      </div>
+     </div>
+     <div class="suggestions-panel">
+      <h4 class="suggestions-title">Quick Actions</h4>
+      <div class="suggestion-item" onclick="askAI('Generate legal report')">
+       📄 Generate Legal Report
+      </div>
+      <div class="suggestion-item" onclick="askAI('Explain confidence score')">
+       📊 Explain Confidence Score
+      </div>
+      <div class="suggestion-item" onclick="askAI('Show similar cases')">
+       🔍 Show Similar Cases
+      </div>
+      <div class="suggestion-item" onclick="askAI('Export evidence package')">
+       💾 Export Evidence Package
+      </div>
+     </div>
+    </section><!-- Reports Section -->
+    <section class="section" id="reportsSection">
+     <div class="reports-container">
+      <div class="table-header">
+       <h3 class="table-title">Investigation History</h3><button class="export-btn" onclick="exportReport()">📥 Download PDF</button>
+      </div>
+      <div class="report-card">
+       <div class="report-header"><span class="report-id">TN001</span> <span class="status-badge status-verified">Verified</span>
+       </div>
+       <div class="report-details"><strong>Date:</strong> 09-Nov-2025<br><strong>Officer:</strong> Inspector Priya R<br><strong>Type:</strong> Facial + Skeletal<br><strong>Confidence:</strong> 92%
+       </div><button class="action-btn" onclick="downloadReport()">Download Report</button>
+      </div>
+      <div class="report-card">
+       <div class="report-header"><span class="report-id">TN002</span> <span class="status-badge status-pending">Pending</span>
+       </div>
+       <div class="report-details"><strong>Date:</strong> 08-Nov-2025<br><strong>Officer:</strong> Officer Kumar S<br><strong>Type:</strong> Dental Records<br><strong>Confidence:</strong> 87%
+       </div><button class="action-btn" onclick="downloadReport()">Download Report</button>
+      </div>
+      <div class="report-card">
+       <div class="report-header"><span class="report-id">TN003</span> <span class="status-badge status-verified">Verified</span>
+       </div>
+       <div class="report-details"><strong>Date:</strong> 07-Nov-2025<br><strong>Officer:</strong> Inspector Priya R<br><strong>Type:</strong> Facial Recognition<br><strong>Confidence:</strong> 94%
+       </div><button class="action-btn" onclick="downloadReport()">Download Report</button>
+      </div>
+     </div>
+    </section>
+   </div><!-- Mobile Navigation -->
+   <nav class="mobile-nav">
+    <div class="mobile-nav-item active" data-section="dashboard">
+     <svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" /> <rect x="14" y="3" width="7" height="7" /> <rect x="14" y="14" width="7" height="7" /> <rect x="3" y="14" width="7" height="7" />
+     </svg><span>Home</span>
+    </div>
+    <div class="mobile-nav-item" data-section="upload">
+     <svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /> <polyline points="17 8 12 3 7 8" /> <line x1="12" y1="3" x2="12" y2="15" />
+     </svg><span>Upload</span>
+    </div>
+    <div class="mobile-nav-item" data-section="cctv">
+     <svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" /> <circle cx="12" cy="13" r="4" />
+     </svg><span>CCTV</span>
+    </div>
+    <div class="mobile-nav-item" data-section="match">
+     <svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8" /> <path d="m21 21-4.35-4.35" />
+     </svg><span>Match</span>
+    </div>
+    <div class="mobile-nav-item" data-section="assistant">
+     <svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+     </svg><span>AI</span>
+    </div>
+    <div class="mobile-nav-item" data-section="reports">
+     <svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /> <polyline points="14 2 14 8 20 8" />
+     </svg><span>Reports</span>
+    </div>
+   </nav>
+  </div><!-- Success Notification -->
+  <div class="success-notification" id="successNotification"></div>
+  <script>
+    // Global state
+    let dataQualityLow = false;
+
+    // Login
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const role = document.getElementById('loginRole').value;
+      const roleDisplay = role.charAt(0).toUpperCase() + role.slice(1);
+      
+      const userRoleElement = document.getElementById('userRoleDisplay');
+      if (userRoleElement) userRoleElement.textContent = roleDisplay;
+      
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('dashboard').classList.add('active');
+    });
+
+    // Navigation
+    const navItems = document.querySelectorAll('.mobile-nav-item');
+    const sections = {
+      'dashboard': document.getElementById('dashboardSection'),
+      'upload': document.getElementById('uploadSection'),
+      'cctv': document.getElementById('cctvSection'),
+      'match': document.getElementById('matchSection'),
+      'assistant': document.getElementById('assistantSection'),
+      'reports': document.getElementById('reportsSection'),
+      'parental': document.getElementById('parentalSection')
+    };
+
+    const pageTitles = {
+      'dashboard': 'Dashboard',
+      'upload': 'Upload Data',
+      'cctv': 'Live CCTV',
+      'match': 'Match Result',
+      'assistant': 'AI Assistant',
+      'reports': 'Reports',
+      'parental': 'Parental Data'
+    };
+
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const sectionName = item.dataset.section;
+        navigateTo(sectionName);
+      });
+    });
+
+    function navigateTo(sectionName) {
+      navItems.forEach(nav => nav.classList.remove('active'));
+      const targetNav = document.querySelector(`.mobile-nav-item[data-section="${sectionName}"]`);
+      if (targetNav) targetNav.classList.add('active');
+      
+      Object.values(sections).forEach(section => {
+        if (section) section.classList.remove('active');
+      });
+      if (sections[sectionName]) sections[sectionName].classList.add('active');
+      
+      const pageTitleElement = document.getElementById('pageTitle');
+      if (pageTitleElement) pageTitleElement.textContent = pageTitles[sectionName];
+
+      window.scrollTo(0, 0);
+    }
+
+    // Upload tabs
+    const uploadTabs = document.querySelectorAll('.upload-tab');
+    uploadTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const category = tab.dataset.category;
+        const categoryTabs = document.querySelectorAll(`.upload-tab[data-category="${category}"]`);
+        categoryTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+
+    function uploadMissingData() {
+      showSuccess('📤 Missing person data uploaded successfully!');
+    }
+
+    function uploadSuspectData() {
+      showSuccess('📤 Suspected match data uploaded successfully!');
+    }
+
+    function matchWithCCTV() {
+      simulateProcessing('cctv');
+    }
+
+    function matchWithSuspect() {
+      // Simulate low quality data scenario (30% chance)
+      dataQualityLow = Math.random() < 0.3;
+      simulateProcessing('suspect');
+    }
+
+    function simulateProcessing(matchType) {
+      const processingPanel = document.getElementById('processingPanel');
+      const progressFill = document.getElementById('progressFill');
+      const progressText = document.getElementById('progressText');
+      
+      processingPanel.classList.add('active');
+      
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 2;
+        progressFill.style.width = progress + '%';
+        progressText.textContent = progress + '%';
+        
+        if (progress >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            processingPanel.classList.remove('active');
+            
+            if (dataQualityLow && matchType === 'suspect') {
+              // Redirect to parental data section
+              showSuccess('⚠️ Data quality insufficient. Redirecting to parental data upload...');
+              setTimeout(() => {
+                navigateTo('parental');
+              }, 2000);
+            } else {
+              showSuccess('✅ Match Found! 92% similarity detected.');
+              setTimeout(() => {
+                navigateTo('match');
+              }, 1500);
+            }
+          }, 500);
+        }
+      }, 30);
+    }
+
+    function uploadParentData(parentType) {
+      showSuccess(`📤 ${parentType === 'father' ? 'Father' : 'Mother'}'s image uploaded successfully!`);
+    }
+
+    function processParentalData() {
+      const processingPanel = document.getElementById('processingPanel');
+      const progressFill = document.getElementById('progressFill');
+      const progressText = document.getElementById('progressText');
+      
+      showSuccess('🔄 Processing parental data with genetic facial analysis...');
+      
+      setTimeout(() => {
+        processingPanel.classList.add('active');
+        
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += 2;
+          progressFill.style.width = progress + '%';
+          progressText.textContent = progress + '%';
+          
+          if (progress >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+              processingPanel.classList.remove('active');
+              showSuccess('✅ Enhanced Match Found! 89% similarity with parental correlation.');
+              setTimeout(() => {
+                navigateTo('match');
+              }, 1500);
+            }, 500);
+          }
+        }, 30);
+      }, 1000);
+    }
+
+    // Match actions
+    function confirmMatch() {
+      showSuccess('✅ Match confirmed! Case TN001 verified.');
+      setTimeout(() => navigateTo('reports'), 1500);
+    }
+
+    function rejectMatch() {
+      showSuccess('❌ Match rejected. Case returned to pending.');
+      setTimeout(() => navigateTo('dashboard'), 1500);
+    }
+
+    function requestVerification() {
+      showSuccess('📋 Verification request sent.');
+    }
+
+    // Chat
+    function sendChatMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      
+      if (message) {
+        const messagesContainer = document.getElementById('chatMessages');
+        const userMessageHTML = `
+          <div class="chat-message">
+            <div class="message-avatar" style="background: rgba(148, 163, 184, 0.3);">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+            <div class="message-content">
+              <div class="message-header">
+                <span class="message-sender">You</span>
+                <span class="message-time">Just now</span>
+              </div>
+              <div class="message-text">${message}</div>
+            </div>
+          </div>
+        `;
+        messagesContainer.insertAdjacentHTML('beforeend', userMessageHTML);
+        input.value = '';
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        setTimeout(() => {
+          const aiResponse = `
+            <div class="chat-message">
+              <div class="message-avatar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M12 1v6m0 6v6"/>
+                </svg>
+              </div>
+              <div class="message-content">
+                <div class="message-header">
+                  <span class="message-sender">AI Assistant</span>
+                  <span class="message-time">Just now</span>
+                </div>
+                <div class="message-text">I've processed your request. The analysis shows <strong>high confidence</strong> based on multiple biometric markers.</div>
+              </div>
+            </div>
+          `;
+          messagesContainer.insertAdjacentHTML('beforeend', aiResponse);
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }, 1000);
+      }
+    }
+
+    document.getElementById('chatInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendChatMessage();
+      }
+    });
+
+    function askAI(question) {
+      const input = document.getElementById('chatInput');
+      input.value = question;
+      sendChatMessage();
+    }
+
+    // Reports
+    function exportReport() {
+      showSuccess('📥 Generating PDF report...');
+      setTimeout(() => {
+        showSuccess('✅ Report exported successfully!');
+      }, 1500);
+    }
+
+    function downloadReport() {
+      showSuccess('📥 Downloading case report...');
+    }
+
+    // Success notification
+    function showSuccess(message) {
+      const notification = document.getElementById('successNotification');
+      notification.textContent = message;
+      notification.classList.add('active');
+      
+      setTimeout(() => {
+        notification.classList.remove('active');
+      }, 3000);
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99bc3d5544527e91',t:'MTc2MjY4MDA4My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
