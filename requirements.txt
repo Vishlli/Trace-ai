@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+python-multipart
+sqlalchemy
+opencv-python-headless
+insightface
+onnxruntime
+numpy
+scikit-learn
+jinja2
+requests
